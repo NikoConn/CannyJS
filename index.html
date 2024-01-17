@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CannyJS</title>
+    <script src="opencv.js" type="text/javascript"></script>
+    <style>
+        .images {
+            display: flex;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+  </head>
+  <body>
+
+    <div>
+        <input type="file" id="fileInput" name="file" />
+        Th1: <input type="number" id="th1" value="40"/> 
+        Th2: <input type="number" id="th2" value="60"/>
+        Aperture: <select id="aperture"> 
+          <option value="3" selected="selected">3</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+        </select>
+    </div>
+
+    <div class="images">
+        <img id="imgElement"> </img>
+        <canvas id="cannyElement"> </canvas>
+    </div>
+
+  </body>
+
+  <script>
+    let imageInputElement = document.getElementById("fileInput");
+    let imageElement = document.getElementById("imgElement");
+    let cannyElement = document.getElementById("cannyElement");
+    let th1Element = document.getElementById("th1");
+    let th2Element = document.getElementById("th2");
+    let apertureElement = document.getElementById("aperture");
+
+    function updateCanny() {
+        let th1 = th1Element.value;
+        let th2 = th2Element.value;
+        let aperture = apertureElement.value;
+        if (th1 == null || th1 == '' || th2 == undefined || th2 == '') {
+            return;
+        }
+
+        th1 = parseFloat(th1);
+        th2 = parseFloat(th2);
+        aperture = parseInt(aperture);
+
+        let src = cv.imread(imageElement);
+        let dst = new cv.Mat();
+        cv.Canny(src, dst, th1, th2, aperture, false);
+        cv.imshow(cannyElement, dst);
+        src.delete();
+        dst.delete();
+    }
+
+    imageInputElement.onchange = (e) => {
+      imageElement.src = URL.createObjectURL(e.target.files[0]);
+    };
+    imageElement.onload = function() {
+        console.log('asd')
+        updateCanny();
+    };
+    th1Element.onchange = function() {
+        console.log('asd')
+        updateCanny();
+    };
+    th2Element.onchange = updateCanny;
+  </script>
+</html>
